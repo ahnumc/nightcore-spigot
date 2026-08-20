@@ -30,6 +30,22 @@ public interface NightProfile {
 
     void setTextures(@Nullable PlayerTextures textures);
 
+    /**
+     * Returns a raw profile property when the active platform exposes it.
+     * Bukkit-only implementations may return {@code null}.
+     */
+    @Nullable
+    default NightProfileProperty getProperty(@NonNull String name) {
+        return null;
+    }
+
+    /**
+     * Adds or replaces a raw profile property when supported by the platform.
+     * Bukkit-only implementations may safely ignore this operation.
+     */
+    default void setProperty(@NonNull NightProfileProperty property) {
+    }
+
     boolean isComplete();
 
     @NonNull

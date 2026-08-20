@@ -12,6 +12,8 @@ public class UserDataQueries {
     public static final Column<UUID>   USER_ID_COLUMN   = Column.uuidType("player_uuid").primaryKey().build();
     public static final Column<String> USER_NAME_COLUMN = Column.stringType("player_name", 32).build();
     public static final Column<String> LAST_SKIN_COLUMN = Column.stringType("last_skin_url", 128).nullable().build();
+    public static final Column<String> LAST_TEXTURE_VALUE_COLUMN = Column.mediumText("last_texture_value").nullable().build();
+    public static final Column<String> LAST_TEXTURE_SIGNATURE_COLUMN = Column.mediumText("last_texture_signature").nullable().build();
     public static final Column<Long>   LAST_SEEN_COLUMN = Column.longType("last_seen").defaultValue(0L).build();
 
     private UserDataQueries() {
@@ -21,10 +23,14 @@ public class UserDataQueries {
         UUID userId = USER_ID_COLUMN.readOrThrow(resultSet);
         String userName = USER_NAME_COLUMN.readOrThrow(resultSet);
         String lastSkinUrl = LAST_SKIN_COLUMN.read(resultSet).orElse(null);
+        String lastTextureValue = LAST_TEXTURE_VALUE_COLUMN.read(resultSet).orElse(null);
+        String lastTextureSignature = LAST_TEXTURE_SIGNATURE_COLUMN.read(resultSet).orElse(null);
         long lastSeen = LAST_SEEN_COLUMN.readOrThrow(resultSet);
 
         UserData data = new UserData(userId, userName);
         data.setLastSkinUrl(lastSkinUrl);
+        data.setLastTextureValue(lastTextureValue);
+        data.setLastTextureSignature(lastTextureSignature);
         data.setLastSeen(lastSeen);
         data.refreshProfile();
         return data;
@@ -40,5 +46,7 @@ public class UserDataQueries {
         .setUUID(USER_ID_COLUMN, UserData::getId)
         .setString(USER_NAME_COLUMN, UserData::getName)
         .setString(LAST_SKIN_COLUMN, UserData::getLastSkinUrl)
+        .setString(LAST_TEXTURE_VALUE_COLUMN, UserData::getLastTextureValue)
+        .setString(LAST_TEXTURE_SIGNATURE_COLUMN, UserData::getLastTextureSignature)
         .build();
 }

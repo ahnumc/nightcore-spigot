@@ -81,6 +81,8 @@ public class UserDataManager extends AbstractBaseDataManager<UserData> {
             .withColumn(UserDataQueries.USER_ID_COLUMN)
             .withColumn(UserDataQueries.USER_NAME_COLUMN)
             .withColumn(UserDataQueries.LAST_SKIN_COLUMN)
+            .withColumn(UserDataQueries.LAST_TEXTURE_VALUE_COLUMN)
+            .withColumn(UserDataQueries.LAST_TEXTURE_SIGNATURE_COLUMN)
             .withColumn(UserDataQueries.LAST_SEEN_COLUMN)
             .build();
 

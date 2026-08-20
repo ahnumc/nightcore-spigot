@@ -1,18 +1,15 @@
 package su.nightexpress.nightcore.userdata;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
-import org.bukkit.profile.PlayerTextures;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import su.nightexpress.nightcore.bridge.wrap.NightProfile;
+import su.nightexpress.nightcore.bridge.wrap.NightProfileProperty;
 import su.nightexpress.nightcore.db.state.StatefulData;
 import su.nightexpress.nightcore.util.Players;
 import su.nightexpress.nightcore.util.profile.PlayerProfiles;
@@ -22,6 +19,8 @@ public class UserData extends StatefulData {
     private final UUID id;
     private String     name;
     private String     lastSkinUrl;
+    private String     lastTextureValue;
+    private String     lastTextureSignature;
     private long       lastSeen;
 
     private NightProfile profile;
@@ -36,9 +35,11 @@ public class UserData extends StatefulData {
 
         URL skin = profile.getTextures().getSkin();
         String lastSkinUrl = skin == null ? null : skin.toString();
+        NightProfileProperty textures = profile.getProperty("textures");
 
         UserData data = new UserData(player.getUniqueId(), player.getName());
         data.setLastSkinUrl(lastSkinUrl);
+        data.setLastTextureProperty(textures);
         data.updateLastSeen();
         data.refreshProfile();
         return data;
@@ -59,8 +60,17 @@ public class UserData extends StatefulData {
         }
 
         URL profileSkin = profile.getTextures().getSkin();
-        if (profileSkin != null) {
-            this.lastSkinUrl = profileSkin.toString();
+        String newSkinUrl = profileSkin == null ? null : profileSkin.toString();
+        NightProfileProperty textures = profile.getProperty("textures");
+
+        if (!java.util.Objects.equals(this.lastSkinUrl, newSkinUrl)) {
+            this.lastSkinUrl = newSkinUrl;
+            this.markDirty();
+        }
+
+        if (!java.util.Objects.equals(this.lastTextureValue, textures == null ? null : textures.value())
+            || !java.util.Objects.equals(this.lastTextureSignature, textures == null ? null : textures.signature())) {
+            this.setLastTextureProperty(textures);
             this.markDirty();
         }
     }
@@ -68,15 +78,12 @@ public class UserData extends StatefulData {
     public void refreshProfile() {
         this.profile = PlayerProfiles.create(this.id, this.name);
 
-        if (this.lastSkinUrl != null) {
-            try {
-                PlayerTextures textures = this.profile.getTextures();
-                textures.setSkin(new URI(this.lastSkinUrl).toURL());
-                this.profile.setTextures(textures);
-            }
-            catch (MalformedURLException | URISyntaxException e) {
-                e.printStackTrace();
-            }
+        if (this.lastTextureValue != null && !this.lastTextureValue.isBlank()) {
+            this.profile.setProperty(new NightProfileProperty(
+                "textures",
+                this.lastTextureValue,
+                this.lastTextureSignature
+            ));
         }
     }
 
@@ -120,6 +127,27 @@ public class UserData extends StatefulData {
 
     public void setLastSkinUrl(@Nullable String lastSkinUrl) {
         this.lastSkinUrl = lastSkinUrl;
+    }
+
+    public @Nullable String getLastTextureValue() {
+        return this.lastTextureValue;
+    }
+
+    public void setLastTextureValue(@Nullable String lastTextureValue) {
+        this.lastTextureValue = lastTextureValue;
+    }
+
+    public @Nullable String getLastTextureSignature() {
+        return this.lastTextureSignature;
+    }
+
+    public void setLastTextureSignature(@Nullable String lastTextureSignature) {
+        this.lastTextureSignature = lastTextureSignature;
+    }
+
+    private void setLastTextureProperty(@Nullable NightProfileProperty property) {
+        this.lastTextureValue = property == null ? null : property.value();
+        this.lastTextureSignature = property == null ? null : property.signature();
     }
 
     public long getLastSeen() {

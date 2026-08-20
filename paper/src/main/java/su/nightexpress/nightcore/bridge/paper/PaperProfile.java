@@ -10,8 +10,10 @@ import org.jspecify.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
 
 import su.nightexpress.nightcore.bridge.wrap.NightProfile;
+import su.nightexpress.nightcore.bridge.wrap.NightProfileProperty;
 
 public class PaperProfile implements NightProfile {
 
@@ -64,6 +66,28 @@ public class PaperProfile implements NightProfile {
     @Override
     public void setTextures(@Nullable PlayerTextures textures) {
         this.backend.setTextures(textures);
+    }
+
+    @Override
+    public @Nullable NightProfileProperty getProperty(@NonNull String name) {
+        return this.backend.getProperties().stream()
+            .filter(property -> property.getName().equals(name))
+            .findFirst()
+            .map(property -> new NightProfileProperty(
+                property.getName(),
+                property.getValue(),
+                property.getSignature()
+            ))
+            .orElse(null);
+    }
+
+    @Override
+    public void setProperty(@NonNull NightProfileProperty property) {
+        this.backend.setProperty(new ProfileProperty(
+            property.name(),
+            property.value(),
+            property.signature()
+        ));
     }
 
     @Override

@@ -76,9 +76,6 @@ public class CoreManager extends AbstractManager<NightCore> {
 
     private void loadItemIntegrations() {
         this.registerItemProvider(VanillaItemAdapter.INSTANCE);
-        this.registerExternalItemProvider(ItemPlugins.EXCELLENT_CRATES, ExcellentCratesHandler::new);
-        this.registerExternalItemProvider(ItemPlugins.EXCELLENT_CRATES, ECratesCrateAdapter::new);
-        this.registerExternalItemProvider(ItemPlugins.EXCELLENT_CRATES, ECratesKeyAdapter::new);
         this.registerExternalItemProvider(ItemPlugins.EXECUTABLE_ITEMS, ExecutableItemsAdapter::new);
         this.registerExternalItemProvider(ItemPlugins.ITEMS_ADDER, ItemsAdderAdapter::new);
         this.registerExternalItemProvider(ItemPlugins.MMOITEMS, MMOItemsAdapter::new);
