@@ -23,14 +23,12 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
 
       - name: Build JARs
-        run: ./gradlew build --build-cache
+        run: ./gradlew build :main:shaded --build-cache
 
-      - name: Upload JARs
+      - name: Upload plugin JAR
         uses: actions/upload-artifact@v7
         with:
           name: NightCore
-          path: |
-            */build/libs/*.jar
-            !*/build/libs/*-sources.jar
+          path: main/build/libs/main-shaded.jar
           if-no-files-found: error
           archive: false
