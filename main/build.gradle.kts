@@ -49,7 +49,7 @@ val bundledJars = bundledProjects.map { projectPath ->
 }
 
 tasks.jar {
-    archiveFileName.set("sunlight.jar")
+    archiveFileName.set("nightcore.jar")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     dependsOn(bundledJars)
     from(bundledJars.map { jarTask -> jarTask.map { zipTree(it.archiveFile) } })

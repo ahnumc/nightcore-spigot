@@ -29,6 +29,6 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: NightCore
-          path: main/build/libs/sunlight.jar
+          path: main/build/libs/nightcore.jar
           if-no-files-found: error
           archive: false
