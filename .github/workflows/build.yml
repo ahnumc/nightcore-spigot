@@ -29,6 +29,6 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: NightCore
-          path: main/build/libs/main-shaded.jar
+          path: main/build/libs/sunlight.jar
           if-no-files-found: error
           archive: false
