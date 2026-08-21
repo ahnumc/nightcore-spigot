@@ -43,12 +43,19 @@ sourceSets {
     }
 }
 
-tasks.register<Jar>("shaded") {
-    archiveClassifier.set("shaded")
+val bundledProjects = listOf(":bridge", ":utils", ":paper", ":spigot", ":intergration-placeholderapi")
+val bundledJars = bundledProjects.map { projectPath ->
+    project(projectPath).tasks.named<Jar>("jar")
+}
+
+tasks.jar {
+    archiveFileName.set("sunlight.jar")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    dependsOn(bundledJars)
+    from(bundledJars.map { jarTask -> jarTask.map { zipTree(it.archiveFile) } })
+}
+
+// Keep the old explicit task name as an alias for deployment scripts.
+tasks.register("shaded") {
     dependsOn(tasks.jar)
-    from(tasks.jar.map { zipTree(it.archiveFile) })
-    configurations.runtimeClasspath.get()
-        .filter { it.name.startsWith("bridge-") || it.name.startsWith("utils-") || it.name.startsWith("paper-") || it.name.startsWith("spigot-") || it.name.startsWith("intergration-placeholderapi-") }
-        .forEach { from(zipTree(it)) }
 }
